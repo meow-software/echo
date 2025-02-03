@@ -1,11 +1,12 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { MessagingGateway } from './messaging.gateway';
 import { KafkaModule } from 'src/kafka/kafka.module';
 import { RedisModule } from 'src/redis/redis.module';
 import { JwtModule } from '@nestjs/jwt'; 
 import { WsErrorHandlerService } from './error/ws-error-handler.service';
-import { AuthHandlers } from './handlers/auth-handlers/auth-handlers';
-import { MessageHandlers } from './handlers/message-handlers/message-handlers';
+import { MessageWebsocketHandlers } from './handlers/message-websocket-handlers';
+import { AuthWebsocketHandlers } from './handlers/auth-websocket-handlers';
+import { MessagingGateway } from './messaging.gateway';
+
 
 @Module({
   imports : [
@@ -18,8 +19,8 @@ import { MessageHandlers } from './handlers/message-handlers/message-handlers';
   providers: [
     MessagingGateway,
     WsErrorHandlerService,
-    AuthHandlers,
-    MessageHandlers
+    AuthWebsocketHandlers,
+    MessageWebsocketHandlers
   ]
 })
 export class WebsocketModule {}
