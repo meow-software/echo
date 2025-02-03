@@ -19,6 +19,7 @@ import { MessagingGateway } from './messaging.gateway';
   providers: [
     MessagingGateway,
     WsErrorHandlerService,
+    // Handler
     AuthWebsocketHandlers,
     MessageWebsocketHandlers
   ]

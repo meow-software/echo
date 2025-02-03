@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
-import { IEvent } from './event.interface';
+import { EchoEventType } from '../echo-event';
 
 /**
  * Abstract base class for WebSocket handlers.
@@ -11,22 +11,22 @@ export abstract class BaseWebsocketHandler {
   /**
    * Event for resource creation.
    */
-  protected createEvent: IEvent = { name: 'create' };
+  protected createEvent: EchoEventType;
 
   /**
    * Event for resource updates.
    */
-  protected updateEvent: IEvent = { name: 'update' };
+  protected updateEvent: EchoEventType;
 
   /**
    * Event for resource deletion.
    */
-  protected deleteEvent: IEvent = { name: 'delete' };
+  protected deleteEvent: EchoEventType;
 
   /**
    * Event for resource replacement (PUT).
    */
-  protected putEvent: IEvent = { name: 'put' };
+  protected putEvent: EchoEventType;
 
   /**
    * Registers WebSocket event handlers.
@@ -37,19 +37,19 @@ export abstract class BaseWebsocketHandler {
     server.on('connection', (client: Socket) => {
       // Automatically register event listeners based on the defined events
       if (this.createEvent) {
-        client.on(this.createEvent.name, (payload: any) => this.create(server, client, payload));
+        client.on(this.createEvent as string, (payload: any) => this.create(server, client, payload));
       }
 
       if (this.updateEvent) {
-        client.on(this.updateEvent.name, (payload: any) => this.update(server, client, payload));
+        client.on(this.updateEvent as string, (payload: any) => this.update(server, client, payload));
       }
 
       if (this.deleteEvent) {
-        client.on(this.deleteEvent.name, (payload: any) => this.delete(server, client, payload));
+        client.on(this.deleteEvent as string, (payload: any) => this.delete(server, client, payload));
       }
 
       if (this.putEvent) {
-        client.on(this.putEvent.name, (payload: any) => this.put(server, client, payload));
+        client.on(this.putEvent as string, (payload: any) => this.put(server, client, payload));
       }
 
     });
