@@ -25,7 +25,7 @@ export class EchoEvent {
 
     // Connection and disconnection events
     static readonly Connection = 'connection';
-    static readonly Deconnection = 'disconnect';
+    static readonly Disconnect = 'disconnect';
     static readonly Ready = 'ready';
     static readonly Resume = 'resume';
     static readonly Reconnect = 'reconnect';

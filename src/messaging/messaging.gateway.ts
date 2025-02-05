@@ -17,21 +17,25 @@ import { MessageWebsocketHandlers } from './handlers/message-websocket-handlers'
   },
 })
 export class MessagingGateway implements OnGatewayInit {
-  
+
   @WebSocketServer() server: Server;
 
   private handlers: BaseWebsocketHandler[];
 
   constructor(
     private readonly authWebsocketHandlers: AuthWebsocketHandlers,
-    private readonly messageWebsocketHandlers: MessageWebsocketHandlers, 
+    private readonly messageWebsocketHandlers: MessageWebsocketHandlers,
     // Inject other handlers
-  ) {}
+  ) {
+    this.handlers.push(authWebsocketHandlers);
+    this.handlers.push(messageWebsocketHandlers);
+  }
 
   afterInit(): void {
     // Register handlers for each module
-    this.authWebsocketHandlers.registerHandlers(this.server);
-    this.messageWebsocketHandlers.registerHandlers(this.server);
+    this.handlers.forEach(handler => {
+      handler.registerHandlers(this.server);
+    });
   }
 }
 /*

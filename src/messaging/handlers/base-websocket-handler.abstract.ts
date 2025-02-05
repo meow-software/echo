@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
-import { EchoEventType } from '../echo-event';
+import { EchoEvent } from '../echo-event';
 
 /**
  * Abstract base class for WebSocket handlers.
@@ -11,22 +11,18 @@ export abstract class BaseWebsocketHandler {
   /**
    * Event for resource creation.
    */
-  protected createEvent: EchoEventType;
+  protected createEvent: EchoEvent;
 
   /**
    * Event for resource updates.
    */
-  protected updateEvent: EchoEventType;
+  protected updateEvent: EchoEvent;
 
   /**
    * Event for resource deletion.
    */
-  protected deleteEvent: EchoEventType;
+  protected deleteEvent: EchoEvent;
 
-  /**
-   * Event for resource replacement (PUT).
-   */
-  protected putEvent: EchoEventType;
 
   /**
    * Registers WebSocket event handlers.
@@ -46,10 +42,6 @@ export abstract class BaseWebsocketHandler {
 
       if (this.deleteEvent) {
         client.on(this.deleteEvent as string, (payload: any) => this.delete(server, client, payload));
-      }
-
-      if (this.putEvent) {
-        client.on(this.putEvent as string, (payload: any) => this.put(server, client, payload));
       }
 
     });
@@ -101,13 +93,4 @@ export abstract class BaseWebsocketHandler {
    * @param payload - The data required to delete the resource.
    */
   abstract delete(server: Server, client: Socket, payload: any): void;
-
-  /**
-   * Abstract method for handling resource replacement (PUT).
-   * Must be implemented by child classes.
-   * @param server - The WebSocket server instance.
-   * @param client - The client socket making the request.
-   * @param payload - The data required to replace the resource.
-   */
-  abstract put(server: Server, client: Socket, payload: any): void;
 }

@@ -11,12 +11,6 @@ import { EchoEvent } from '../echo-event';
 
 @Injectable()
 export class AuthWebsocketHandlers extends BaseWebsocketHandler {
-  // Override the default events
-  protected createEvent = { name: 'channel:create' };
-  protected updateEvent = { name: 'channel:update' };
-  protected deleteEvent = { name: 'channel:delete' };
-  protected putEvent = { name: 'channel:replace' };
-
   // IF CHANGE KEY, EDIT AUTHSERVICE
   private readonly REDIS_CACHE_USER_TOKEN = `USER:TOKENS:`;
   private readonly REDIS_CACHE_USER_CONNECTED = `user:connected:`;
@@ -169,7 +163,4 @@ export class AuthWebsocketHandlers extends BaseWebsocketHandler {
     throw new Error('Method not implemented.');
   }
   
-  put(server: Server, client: Socket, payload: any): void {
-    throw new Error('Method not implemented.');
-  }
 }
