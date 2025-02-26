@@ -27,6 +27,7 @@ export class MessagingGateway implements OnGatewayInit {
     private readonly messageWebsocketHandlers: MessageWebsocketHandlers,
     // Inject other handlers
   ) {
+    this.handlers = [];
     this.handlers.push(authWebsocketHandlers);
     this.handlers.push(messageWebsocketHandlers);
   }

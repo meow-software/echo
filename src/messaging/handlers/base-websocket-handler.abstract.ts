@@ -23,6 +23,8 @@ export abstract class BaseWebsocketHandler {
    */
   protected deleteEvent: EchoEvent;
 
+  protected server: Server;
+  
 
   /**
    * Registers WebSocket event handlers.
@@ -30,6 +32,7 @@ export abstract class BaseWebsocketHandler {
    * @param server - The WebSocket server instance.
    */
   registerHandlers(server: Server): void {
+    this.server = server;
     server.on('connection', (client: Socket) => {
       // Automatically register event listeners based on the defined events
       if (this.createEvent) {
@@ -49,12 +52,22 @@ export abstract class BaseWebsocketHandler {
 
   /**
    * Emits an event to all connected clients.
-   * @param server - The WebSocket server instance.
    * @param event - The event name to emit.
    * @param payload - The data to send with the event.
    */
-  protected emitToAll(server: Server, event: string, payload: any): void {
-    server.emit(event, payload);
+  public emitToAll(event: EchoEvent, payload: any): void {
+    this.server.emit(event as string, payload);
+  }
+  /**
+   * Emits an event to all clients in a specific WebSocket room.
+   * If the room does not exist or has no connected clients, the event will not be sent to anyone.
+   * 
+   * @param room - The name of the room to which the event should be sent.
+   * @param event - The event name to emit.
+   * @param payload - The data to send with the event.
+   */
+  public emitToRoom(room: string, event: EchoEvent, payload: any): void {
+    this.server.to(room).emit(event as string, payload);
   }
 
   /**
@@ -63,8 +76,8 @@ export abstract class BaseWebsocketHandler {
    * @param event - The event name to emit.
    * @param payload - The data to send with the event.
    */
-  protected emitToClient(client: Socket, event: string, payload: any): void {
-    client.emit(event, payload);
+  public emitToClient(client: Socket, event: EchoEvent, payload: any): void {
+    client.emit(event as string, payload);
   }
 
   /**

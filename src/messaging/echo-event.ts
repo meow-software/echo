@@ -63,4 +63,4 @@ export class EchoEvent {
     static readonly Unknown = 'unknown';
 }
 
-export type EchoEventType = typeof EchoEvent[keyof typeof EchoEvent];
+// export type EchoEventType = typeof EchoEvent[keyof typeof EchoEvent];

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ClientKafka, Transport, Client } from '@nestjs/microservices';  
 import { kafkaConfig } from '../config.kafka';
+import { KAFKA_TOPIC } from '../kafka.topic';
 
 
 @Injectable()
@@ -11,7 +12,7 @@ export class ChatProducerService {
     })
     private client: ClientKafka;
   
-    async send(event:any, message: any) {
-      this.client.emit("SEND_MESSAGE", message); 
+    async send(message: any) {
+      this.client.emit(KAFKA_TOPIC.ChatMessages, message); 
     }
   }

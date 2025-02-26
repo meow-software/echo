@@ -6,6 +6,7 @@ import { WsErrorHandlerService } from './error/ws-error-handler.service';
 import { MessageWebsocketHandlers } from './handlers/message-websocket-handlers';
 import { AuthWebsocketHandlers } from './handlers/auth-websocket-handlers';
 import { MessagingGateway } from './messaging.gateway';
+import { DtoChecker } from 'src/dto-checker/dto-checker.service';
 
 
 @Module({
@@ -13,12 +14,13 @@ import { MessagingGateway } from './messaging.gateway';
     // circular dependance
     forwardRef(() => KafkaModule), 
     RedisModule, 
-    JwtModule.register({})
+    JwtModule.register({}),
   ],
   exports: [MessagingGateway],
   providers: [
     MessagingGateway,
     WsErrorHandlerService,
+    DtoChecker,
     // Handler
     AuthWebsocketHandlers,
     MessageWebsocketHandlers
