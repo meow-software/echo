@@ -6,6 +6,7 @@ import { kafkaConfigClientModule } from './config.kafka';
 import { MessageCreateHandler } from './handler/message-create-handler.service';
 import { ChatConsumerService } from './consumers/chat-consumer.service';
 import { Kafka } from 'kafkajs';
+import { NotificationConsumerService } from './consumers/notification-consumer.service';
 
 @Module({
   imports : [
@@ -16,6 +17,7 @@ import { Kafka } from 'kafkajs';
   providers: [
     ProducerService, 
     ChatConsumerService,
+    NotificationConsumerService,
     // Client Kafka
     {...kafkaConfigClientModule},
     // Kafka Handlers
