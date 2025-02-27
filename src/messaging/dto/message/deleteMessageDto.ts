@@ -4,4 +4,9 @@ export class DeleteMessageDto {
   @IsNumberString()
   @IsNotEmpty()
   messageId: string; 
+
+  
+  @IsNumberString()
+  @IsNotEmpty()
+  channelId: string; 
 }

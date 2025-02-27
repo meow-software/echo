@@ -16,7 +16,9 @@ import { DtoChecker } from 'src/dto-checker/dto-checker.service';
     RedisModule, 
     JwtModule.register({}),
   ],
-  exports: [MessagingGateway],
+  exports: [
+    MessagingGateway,
+    MessageWebsocketHandlers],
   providers: [
     MessagingGateway,
     WsErrorHandlerService,

@@ -1,7 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ChatProducerService } from 'src/kafka/producers/chat.producer.service';
 import { RedisClientService } from 'src/redis/redis.client.service';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -20,7 +19,6 @@ export class AuthWebsocketHandlers extends BaseWebsocketHandler {
   constructor(
     private readonly jwtService: JwtService,
     private readonly redisService: RedisClientService,
-    private readonly chatProducerService: ChatProducerService,
     private readonly wsErrorHandlerService: WsErrorHandlerService,
     private readonly configService: ConfigService
   ) {

@@ -5,6 +5,10 @@ export class UpdateMessageDto {
   @IsNotEmpty()
   messageId: string; 
 
+  @IsNumberString()
+  @IsNotEmpty()
+  channelId: string; 
+  
   @IsString()
   @IsNotEmpty()
   @MaxLength(2000)

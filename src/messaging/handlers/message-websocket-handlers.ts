@@ -2,9 +2,12 @@ import { Server, Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
 import { BaseWebsocketHandler } from './base-websocket-handler.abstract';
 import { EchoEvent } from '../echo-event';
-import { ChatProducerService } from 'src/kafka/producers/chat.producer.service';
+import { ProducerService } from 'src/kafka/producers/producer.service';
 import { DtoChecker } from 'src/dto-checker/dto-checker.service';
 import { CreateMessageDto } from '../dto/message/createMessageDto';
+import { UpdateMessageDto } from '../dto/message/updateMessageDto';
+import { DeleteMessageDto } from '../dto/message/deleteMessageDto';
+import { KAFKA_EVENT } from 'src/kafka/kafka.event';
 
 
 @Injectable()
@@ -12,7 +15,7 @@ export class MessageWebsocketHandlers extends BaseWebsocketHandler {
   // Override the default events
 
   constructor(
-    private readonly chatProducerService: ChatProducerService,
+    private readonly producerService: ProducerService,
     private readonly dtoChecker: DtoChecker
   ) {
     super();
@@ -27,38 +30,40 @@ export class MessageWebsocketHandlers extends BaseWebsocketHandler {
    * @param client - The client socket making the request.
    * @param message - The data required to create the message.
    */
-  async create(server: Server, client: Socket, messageDto: CreateMessageDto): Promise<void> {
-    // const message = {
-    //   senderId: messageDto.senderId,
-    //   channelId: messageDto.channelId,
-    //   content: messageDto.content,
-    //   createdAt: new Date(),
-    // };
+  async create(server: Server, client: Socket, messageDto: CreateMessageDto) {
     if (await this.dtoChecker.checkAndEmitErrors(client, CreateMessageDto, messageDto)) {
       return ;
     }
     // Send Kafka for treatment
-    await this.chatProducerService.send(messageDto);
+    await this.producerService.send(KAFKA_EVENT.MessageCreate, messageDto);
   }
 
   /**
-   * Implements the `update` method for resource updates.
+   * Implements the `update` method for message updates.
    * @param server - The WebSocket server instance.
    * @param client - The client socket making the request.
-   * @param payload - The data required to update the resource.
+   * @param messageDto - The data required to update the message.
    */
-  update(server: Server, client: Socket, payload: any): void {
-
+  async update(server: Server, client: Socket, messageDto: UpdateMessageDto) {
+    if (await this.dtoChecker.checkAndEmitErrors(client, UpdateMessageDto, messageDto)) {
+      return ;
+    }
+    // Send Kafka for treatment
+    await this.producerService.send(KAFKA_EVENT.MessageUpdate, messageDto); 
   }
 
   /**
-   * Implements the `delete` method for resource deletion.
+   * Implements the `delete` method for message deletion.
    * @param server - The WebSocket server instance.
    * @param client - The client socket making the request.
-   * @param payload - The data required to delete the resource.
+   * @param messageDto - The data required to delete the message.
    */
-  delete(server: Server, client: Socket, payload: any): void {
-
+  async delete(server: Server, client: Socket, messageDto: DeleteMessageDto) {
+    if (await this.dtoChecker.checkAndEmitErrors(client, DeleteMessageDto, messageDto)) {
+      return ;
+    }
+    // Send Kafka for treatment
+    await this.producerService.send(KAFKA_EVENT.MessageDelete, messageDto); 
   }
 
 }
