@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UnauthorizedException, NotFoundException, HttpException } from '@nestjs/common';
 import { Socket } from 'socket.io';
+import { EchoEvent } from '../echo-event';
 
 @Injectable()
 /**
@@ -29,7 +30,8 @@ export class WsErrorHandlerService {
    * this.wsErrorHandlerService.emitError(client, error);
    */
   emitError(client: Socket, error: HttpException) {
-    client.emit('error', this.formatErrorResponse(error)); // Envoie l'erreur au client via WebSocket
+    console.log(error.getResponse());
+    client.emit(EchoEvent.WebSocketError, this.formatErrorResponse(error)); // Envoie l'erreur au client via WebSocket
   }
 
   /**
@@ -50,19 +52,33 @@ export class WsErrorHandlerService {
    * // Output:
    * {
    *   statusCode: 401,
-   *   message: 'Access denied',
+   *   errors: 'Access denied',
    *   error: 'UnauthorizedException'
    * }
    */
   private formatErrorResponse(error: HttpException) {
-    const statusCode = error.getStatus();
-    const message = error.message;
-    const errorType = error.constructor.name;
+    const response = error.getResponse();
+    
+    if (Array.isArray(response['message'])) {
+      const formattedErrors = response['message'].map((err) => ({
+        property: err.property,
+        constraints: err.constraints, 
+      }))[0];
+      console.log(formattedErrors)
+      return {
+        statusCode: error.getStatus(),
+        errors: formattedErrors, 
+        error: response['error'],
+        message: Object.values(formattedErrors.constraints),
+      };
+    }
 
     return {
-      statusCode,
-      message,
-      error: errorType,
+      statusCode: error.getStatus(),
+      errors: [], 
+      error: response['error'], 
+      message: error.message,
     };
   }
+
 }

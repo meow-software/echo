@@ -6,7 +6,7 @@ import { WsErrorHandlerService } from './error/ws-error-handler.service';
 import { MessageWebsocketHandlers } from './handlers/message-websocket-handlers';
 import { AuthWebsocketHandlers } from './handlers/auth-websocket-handlers';
 import { MessagingGateway } from './messaging.gateway';
-import { DtoChecker } from 'src/dto-checker/dto-checker.service';
+import { DtoChecker } from 'src/dto-checker.service';
 
 
 @Module({

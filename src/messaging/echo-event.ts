@@ -59,7 +59,7 @@ export class EchoEvent {
     static readonly WebSocketClose = 'webSocketClose';
     static readonly WebSocketError = 'webSocketError';
 
-    // Other Discord events (as needed)
+    // Other events (as needed)
     static readonly Unknown = 'unknown';
 }
 

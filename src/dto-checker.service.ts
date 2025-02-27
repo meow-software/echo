@@ -1,10 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
 import { Socket } from 'socket.io';
+import { EchoEvent } from 'src/messaging/echo-event';
+import { WsErrorHandlerService } from 'src/messaging/error/ws-error-handler.service';
 
 @Injectable()
 export class DtoChecker {
+  constructor(
+    private readonly wsErrorHandlerService: WsErrorHandlerService
+  ) {}
     /**
      * Validates an object against the given DTO class.
      * @param dtoClass - The DTO class to validate against.
@@ -41,7 +46,7 @@ export class DtoChecker {
         const errors = await this.check(dtoClass, payload);
 
         if (errors.length > 0) {
-            client.emit("clientError", errors);
+            this.wsErrorHandlerService.emitError(client, new BadRequestException(errors));
             return true;
         }
 

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { BaseWebsocketHandler } from './base-websocket-handler.abstract';
 import { EchoEvent } from '../echo-event';
 import { ProducerService } from 'src/kafka/producers/producer.service';
-import { DtoChecker } from 'src/dto-checker/dto-checker.service';
+import { DtoChecker } from 'src/dto-checker.service';
 import { CreateMessageDto } from '../dto/message/createMessageDto';
 import { UpdateMessageDto } from '../dto/message/updateMessageDto';
 import { DeleteMessageDto } from '../dto/message/deleteMessageDto';
