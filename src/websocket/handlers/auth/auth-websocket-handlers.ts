@@ -1,19 +1,13 @@
 import { Server, Socket } from 'socket.io';
-import { Injectable } from '@nestjs/common';
+import {  BadRequestException, UnauthorizedException , Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { RedisClientService } from 'src/redis/redis.client.service';
-import { BadRequestException, UnauthorizedException } from '@nestjs/common';
+
 import { ConfigService } from '@nestjs/config';
-import { WsErrorHandlerService } from '../error/ws-error-handler.service';
-import { BaseWebsocketHandler } from './base-websocket-handler.abstract';
-import { EchoEvent } from '../echo-event';
+import { BaseWebsocketHandler, RedisClientService } from '@tellme/common';
+import { EchoEvent, RedisCacheKey, WsErrorHandlerService } from '@tellme/shared';
 
 @Injectable()
 export class AuthWebsocketHandlers extends BaseWebsocketHandler {
-  // IF CHANGE KEY, EDIT AUTHSERVICE
-  private readonly REDIS_CACHE_USER_TOKEN = `USER:TOKENS:`;
-  private readonly REDIS_CACHE_USER_CONNECTED = `user:connected:`;
-  private readonly REDIS_CACHE_SOCKET_CONNECTED = `socket:connected:`;
   private readonly TTL: number;
 
   constructor(
@@ -94,7 +88,7 @@ export class AuthWebsocketHandlers extends BaseWebsocketHandler {
 
     // Check legitimacy of JWT Token
     const redis = await this.redisService.getIoRedis();
-    const cachedToken = await redis.sismember(`${this.REDIS_CACHE_USER_TOKEN}${userId}`, token);
+    const cachedToken = await redis.sismember(RedisCacheKey.getUserToken(userId), token);
 
     if (cachedToken === 1) {
       // Token valid found in cache redis
@@ -111,10 +105,10 @@ export class AuthWebsocketHandlers extends BaseWebsocketHandler {
     // We can use userId and decoded
     // Put user connected in cache redis
     // userId → {socketId, ..}
-    await redis.sadd(`${this.REDIS_CACHE_USER_CONNECTED}${userId}`, client.id);
-    await redis.expire(`${this.REDIS_CACHE_USER_CONNECTED}${userId}`, this.TTL); // TTL de 5 minutes (300 secondes)
+    await redis.sadd(RedisCacheKey.getUserConnected(userId), client.id);
+    await redis.expire(RedisCacheKey.getUserConnected(userId), this.TTL); // TTL de 5 minutes (300 secondes)
     // socketId → userId
-    await this.redisService.set(`${this.REDIS_CACHE_SOCKET_CONNECTED}${client.id}`, userId, this.TTL); // TTL de 5 minutes (300 secondes)
+    await this.redisService.set(RedisCacheKey.getSocketConnected(client.id), userId, this.TTL); // TTL de 5 minutes (300 secondes)
     client.emit('user-joined', {
       message: `user joined the chat: ${client.id}`,
     });
@@ -128,22 +122,22 @@ export class AuthWebsocketHandlers extends BaseWebsocketHandler {
     // Externaliser la clé socket connected et les autres, tester handle disconnect
     console.log('--disc', client.id);
     // socketId → userId
-    const userId = await this.redisService.get(`${this.REDIS_CACHE_SOCKET_CONNECTED}${client.id}`);
+    const userId = await this.redisService.get(RedisCacheKey.getSocketConnected(client.id));
     console.log('--disc', userId);
     if (!userId) return;
 
     const redis = await this.redisService.getIoRedis();
     // Remove userId → socketId, now userId → {..clients..}\socketId
-    await redis.srem(`${this.REDIS_CACHE_USER_CONNECTED}${userId}`, client.id);
+    await redis.srem(RedisCacheKey.getUserConnected(userId), client.id);
     // Remove socketId
-    await this.redisService.delete(`${this.REDIS_CACHE_SOCKET_CONNECTED}${client.id}`);
+    await this.redisService.delete(RedisCacheKey.getSocketConnected(client.id));
     console.log(`User disconnected: ${client.id}`);
 
-    const activeConnections = await redis.scard(`${this.REDIS_CACHE_USER_CONNECTED}${userId}`);
+    const activeConnections = await redis.scard(RedisCacheKey.getUserConnected(userId));
     console.log('a--active con-', activeConnections);
     if (activeConnections === 0) {
       // User doesn't have any connections, disconnect
-      await this.redisService.delete(`${this.REDIS_CACHE_USER_CONNECTED}${userId}`);
+      await this.redisService.delete(RedisCacheKey.getUserConnected(userId));
       console.log(`User ${userId} has no more active connections, removed from Redis.`);
     }
     console.log('--fin');

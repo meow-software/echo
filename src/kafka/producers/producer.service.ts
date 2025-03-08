@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { KafkaProducer } from '../kafka-producer.abstract';
+import { AbstractKafkaProducer } from '@tellme/common';
 import { Kafka } from 'kafkajs';
 
 
 @Injectable()
-export class ProducerService extends KafkaProducer { 
+export class ProducerService extends AbstractKafkaProducer { 
   constructor(
     @Inject('KAFKA_CLIENT') protected readonly kafkaClient: Kafka
   ) {

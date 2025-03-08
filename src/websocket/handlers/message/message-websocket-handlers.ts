@@ -1,13 +1,8 @@
 import { Server, Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
-import { BaseWebsocketHandler } from './base-websocket-handler.abstract';
-import { EchoEvent } from '../echo-event';
 import { ProducerService } from 'src/kafka/producers/producer.service';
-import { DtoChecker } from 'src/dto-checker.service';
-import { CreateMessageDto } from '../dto/message/createMessageDto';
-import { UpdateMessageDto } from '../dto/message/updateMessageDto';
-import { DeleteMessageDto } from '../dto/message/deleteMessageDto';
-import { KAFKA_EVENT } from 'src/kafka/kafka.event';
+import { CreateMessageDto, DeleteMessageDto, DtoChecker, EchoEvent, KafkaEvent, UpdateMessageDto } from '@tellme/shared';
+import { BaseWebsocketHandler } from '@tellme/common';
 
 
 @Injectable()
@@ -35,7 +30,7 @@ export class MessageWebsocketHandlers extends BaseWebsocketHandler {
       return ;
     }
     // Send Kafka for treatment
-    await this.producerService.send(KAFKA_EVENT.MessageCreate, messageDto);
+    await this.producerService.send(KafkaEvent.MessageCreate, messageDto);
   }
 
   /**
@@ -49,7 +44,7 @@ export class MessageWebsocketHandlers extends BaseWebsocketHandler {
       return ;
     }
     // Send Kafka for treatment
-    await this.producerService.send(KAFKA_EVENT.MessageUpdate, messageDto); 
+    await this.producerService.send(KafkaEvent.MessageUpdate, messageDto); 
   }
 
   /**
@@ -63,7 +58,7 @@ export class MessageWebsocketHandlers extends BaseWebsocketHandler {
       return ;
     }
     // Send Kafka for treatment
-    await this.producerService.send(KAFKA_EVENT.MessageDelete, messageDto); 
+    await this.producerService.send(KafkaEvent.MessageDelete, messageDto); 
   }
 
 }

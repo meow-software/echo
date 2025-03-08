@@ -1,20 +1,20 @@
 import { OnGatewayInit, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { BaseWebsocketHandler } from './handlers/base-websocket-handler.abstract';
-import { AuthWebsocketHandlers } from './handlers/auth-websocket-handlers';
-import { MessageWebsocketHandlers } from './handlers/message-websocket-handlers';
+import { AuthWebsocketHandlers } from './handlers/auth/auth-websocket-handlers';
+import { MessageWebsocketHandlers } from './handlers/message/message-websocket-handlers';
+import { IBaseWebsocketHandler } from '@tellme/common';
 
 
 @WebSocketGateway({
   cors: {
-    origin: '*', // Adjust according to your configuration
+    origin: '*',
   },
 })
 export class MessagingGateway implements OnGatewayInit {
 
   @WebSocketServer() server: Server;
 
-  private handlers: BaseWebsocketHandler[];
+  private handlers: IBaseWebsocketHandler[];
 
   constructor(
     private readonly authWebsocketHandlers: AuthWebsocketHandlers,

@@ -1,18 +1,14 @@
-import { forwardRef, Module } from '@nestjs/common';  
-import { WebsocketModule } from 'src/messaging/messaging.module';
-import { ProducerService } from './producers/producer.service';
-import { RedisModule } from 'src/redis/redis.module';
+import { Module } from '@nestjs/common';  
 import { kafkaConfigClientModule } from './config.kafka';
-import { MessageCreateHandler } from './handler/message-create-handler.service';
+import { ProducerService } from './producers/producer.service';
 import { ChatConsumerService } from './consumers/chat-consumer.service';
-import { Kafka } from 'kafkajs';
 import { NotificationConsumerService } from './consumers/notification-consumer.service';
+import { KafkaHandlerModule } from './kafka-handler.module';
 
 @Module({
   imports : [
     // circular dependance
-    forwardRef(() => WebsocketModule),
-    RedisModule,
+    KafkaHandlerModule,
   ],
   providers: [
     ProducerService, 
@@ -20,9 +16,7 @@ import { NotificationConsumerService } from './consumers/notification-consumer.s
     NotificationConsumerService,
     // Client Kafka
     {...kafkaConfigClientModule},
-    // Kafka Handlers
-    MessageCreateHandler
   ],
-  exports: [ProducerService],
+  exports: [ProducerService, ChatConsumerService, NotificationConsumerService],
 })
 export class KafkaModule {}
