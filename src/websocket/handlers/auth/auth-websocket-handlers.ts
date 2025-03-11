@@ -1,9 +1,9 @@
 import { Server, Socket } from 'socket.io';
-import {  BadRequestException, UnauthorizedException , Injectable } from '@nestjs/common';
+import { BadRequestException, UnauthorizedException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { ConfigService } from '@nestjs/config';
-import { BaseWebsocketHandler, RedisClientService } from '@tellme/common';
+import { BaseWebsocketHandler, OnWebsocketEventHandler, RedisClientService } from '@tellme/common';
 import { EchoEvent, RedisCacheKey, WsErrorHandlerService } from '@tellme/shared';
 
 @Injectable()
@@ -19,26 +19,40 @@ export class AuthWebsocketHandlers extends BaseWebsocketHandler {
     super();
     this.TTL = parseInt(this.configService.get("JWT_EXPIRES_IN", "3600"));
   }
-  /**
- * Override the `registerHandlers` method to handle connection and disconnection events.
- * @param server - The WebSocket server instance.
- */
-  registerHandlers(server: Server): void {
-    server.on('connection', (client: Socket) => {
-      
-      this.handleConnection(client);
-
-      client.on(EchoEvent.Disconnect, () => {
-        this.handleDisconnect(client);
-      });
-    });
+  @OnWebsocketEventHandler(EchoEvent.Connection)
+  async connection(server: Server, client: Socket, message: any) {
+    console.log('Connection server:', server);
+    console.log('Connection payload:', message);
+    this.handleConnection(client);
   }
+  
+  @OnWebsocketEventHandler(EchoEvent.Disconnect)
+  async deconnection(server: Server, client: Socket, payload: any) {
+    console.log('Server:', server);
+    console.log('Connection detecter:', client.id);
+    console.log('Payload', payload);
+  }
+  //   /**
+  //  * Override the `registerHandlers` method to handle connection and disconnection events.
+  //  * @param server - The WebSocket server instance.
+  //  */
+  //   registerHandlers(server: Server): void {
+  //     server.on('connection', (client: Socket) => {
+
+  //       this.handleConnection(client);
+
+  //       client.on(EchoEvent.Disconnect, () => {
+  //         this.handleDisconnect(client);
+  //       });
+  //     });
+  //   }
 
   /**
    * Handles a new client connection.
    * @param client - The client socket.
    */
   async handleConnection(client: Socket) {
+    console.log('Connection client:', client.id);
     // Just for dev
     client.emit('user-joined', {
       message: `user joined the chat: ${client.id}`,
@@ -146,13 +160,13 @@ export class AuthWebsocketHandlers extends BaseWebsocketHandler {
   create(server: Server, client: Socket, payload: any): void {
     throw new Error('Method not implemented.');
   }
-  
+
   update(server: Server, client: Socket, payload: any): void {
     throw new Error('Method not implemented.');
   }
-  
+
   delete(server: Server, client: Socket, payload: any): void {
     throw new Error('Method not implemented.');
   }
-  
+
 }

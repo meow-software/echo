@@ -14,9 +14,9 @@ export class MessageWebsocketHandlers extends BaseWebsocketHandler {
     private readonly dtoChecker: DtoChecker
   ) {
     super();
-    this.createEvent = EchoEvent.MessageCreate;
-    this.updateEvent = EchoEvent.MessageUpdate;
-    this.deleteEvent = EchoEvent.MessageDelete;
+    // this.createEvent = EchoEvent.MessageCreate;
+    // this.updateEvent = EchoEvent.MessageUpdate;
+    // this.deleteEvent = EchoEvent.MessageDelete;
   }
 
   /**

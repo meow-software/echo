@@ -2,7 +2,7 @@ import { OnGatewayInit, WebSocketGateway, WebSocketServer } from '@nestjs/websoc
 import { Server } from 'socket.io';
 import { AuthWebsocketHandlers } from './handlers/auth/auth-websocket-handlers';
 import { MessageWebsocketHandlers } from './handlers/message/message-websocket-handlers';
-import { IBaseWebsocketHandler } from '@tellme/common';
+import { IBaseWebsocketHandler,EchoWebsocketGateway } from '@tellme/common';
 
 
 @WebSocketGateway({
@@ -10,26 +10,31 @@ import { IBaseWebsocketHandler } from '@tellme/common';
     origin: '*',
   },
 })
-export class MessagingGateway implements OnGatewayInit {
+export class MessagingGateway extends EchoWebsocketGateway implements OnGatewayInit {
 
   @WebSocketServer() server: Server;
 
-  private handlers: IBaseWebsocketHandler[];
+  private websocketHandlers: IBaseWebsocketHandler[] = [];
 
   constructor(
     private readonly authWebsocketHandlers: AuthWebsocketHandlers,
     private readonly messageWebsocketHandlers: MessageWebsocketHandlers,
     // Inject other handlers
   ) {
-    this.handlers = [];
-    this.handlers.push(authWebsocketHandlers);
-    this.handlers.push(messageWebsocketHandlers);
+    super();
+    this.setServer(this.server);
+    this.websocketHandlers.push(authWebsocketHandlers);
+    this.websocketHandlers.push(messageWebsocketHandlers);
   }
 
   afterInit(): void {
     // Register handlers for each module
-    this.handlers.forEach(handler => {
-      handler.registerHandlers(this.server);
-    });
+    while (this.websocketHandlers.length > 0) {
+      const handler = this.websocketHandlers.shift(); // remove first element
+      if (handler) {
+        this.registerEventHandlers(handler);
+      }
+    }
+    this.listen();
   }
 }

@@ -12,7 +12,7 @@ import { MessageCacheService, MessageRepository } from '@tellme/shared';
   imports : [
     SharedModule,
     KafkaSharedModule
-  ], 
+  ],
   providers: [
     MessageWebsocketHandlers,
     MessageKafkaEventHandler,
