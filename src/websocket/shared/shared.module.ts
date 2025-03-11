@@ -1,17 +1,13 @@
-import { forwardRef, Module } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
-import { JwtModule } from '@nestjs/jwt';
-import { RedisClientService } from '@tellme/common';
-import { DtoChecker, WsErrorHandlerService } from '@tellme/shared';
-import { kafkaConfigClientModule } from 'src/kafka/config.kafka';
-import { ChatConsumerService } from 'src/kafka/consumers/chat-consumer.service';
-import { NotificationConsumerService } from 'src/kafka/consumers/notification-consumer.service';
-import { KafkaModule } from 'src/kafka/kafka.module';
-import { ProducerService } from 'src/kafka/producers/producer.service';
-import { MessageModule } from '../handlers/message/message.module';
+import { Module } from '@nestjs/common';
+import { CommandBus, CqrsModule } from '@nestjs/cqrs';
+import { PrismaService, RedisClientService, SnowflakeService } from '@tellme/common';
+import { DtoChecker, RedisModule, WsErrorHandlerService, RepositoryModule } from '@tellme/shared';
 
 @Module({
   imports : [
+    CqrsModule,
+    RedisModule,
+    RepositoryModule,
   ],
   providers: [
     RedisClientService,
@@ -19,12 +15,16 @@ import { MessageModule } from '../handlers/message/message.module';
     DtoChecker,
     WsErrorHandlerService,
     CommandBus,
+    SnowflakeService,
+    PrismaService
   ],
   exports: [
     RedisClientService, 
     WsErrorHandlerService, 
     DtoChecker, 
     CommandBus,
+    SnowflakeService,
+    PrismaService
   ],
 })
 export class SharedModule {}

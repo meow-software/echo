@@ -15,7 +15,7 @@ import { KafkaHandlerModule } from './kafka-handler.module';
     ChatConsumerService,
     NotificationConsumerService,
     // Client Kafka
-    {...kafkaConfigClientModule},
+    {...kafkaConfigClientModule}
   ],
   exports: [ProducerService, ChatConsumerService, NotificationConsumerService],
 })

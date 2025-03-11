@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { EachMessagePayload, Kafka, KafkaMessage } from 'kafkajs';
+import { Kafka } from 'kafkajs';
 import { AbstractKafkaConsumer } from '@tellme/common';
 
 @Injectable()
@@ -10,8 +10,8 @@ export class NotificationConsumerService extends AbstractKafkaConsumer {
 
   constructor(
     // private readonly messageCreateHandler: MessageCreateHandler,
-    @Inject('KAFKA_CLIENT') protected readonly kafka: Kafka
-    
+    @Inject('KAFKA_CLIENT') protected readonly kafka: Kafka,
+
   ) {
     super(kafka, 'notification-consumer-group');
     // subscribe to Handler
@@ -19,12 +19,12 @@ export class NotificationConsumerService extends AbstractKafkaConsumer {
     // this.subscribeToHandler(messageCreateHandler);
     this.run();
   }
-  public consumeMessage(event: string, message: KafkaMessage, eachMessage?: EachMessagePayload): void {
-      const handler = this.handlers.find(h => h.eventType as string === event);
-  
-      if (handler) {
-        console.log(`Consuming ${event} from NotificationConsumer, data: ${this.fromKafkaMessageToObj(message).value}`);
-      }
-    }
+  // public consumeMessage(event: string, message: KafkaMessage, eachMessage?: EachMessagePayload): void {
+  //   const handler = this.handlers.find(h => h.eventType as string === event);
+
+  //   if (handler) {
+  //     console.log(`Consuming ${event} from NotificationConsumer, data: ${this.fromKafkaMessageToObj(message).value}`);
+  //   }
+  // }
 
 }
