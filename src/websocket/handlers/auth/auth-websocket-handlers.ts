@@ -19,33 +19,29 @@ export class AuthWebsocketHandlers extends BaseWebsocketHandler {
     super();
     this.TTL = parseInt(this.configService.get("JWT_EXPIRES_IN", "3600"));
   }
+
+    /**
+   * Handles connection event.
+   * 
+   * @param {Server} _server - The WebSocket server instance.
+   * @param {Socket} client - The client socket initiating the event.
+   * @returns {Promise<void>}
+   */
   @OnWebsocketEventHandler(EchoEvent.Connection)
-  async connection(server: Server, client: Socket, message: any) {
-    console.log('Connection server:', server);
-    console.log('Connection payload:', message);
+  async connection(_server: Server, client: Socket) {
     this.handleConnection(client);
   }
-  
+  /**
+   * Handles deconnection event.
+   * 
+   * @param {Server} _server - The WebSocket server instance.
+   * @param {Socket} client - The client socket initiating the event.
+   * @returns {Promise<void>}
+   */
   @OnWebsocketEventHandler(EchoEvent.Disconnect)
-  async deconnection(server: Server, client: Socket, payload: any) {
-    console.log('Server:', server);
-    console.log('Connection detecter:', client.id);
-    console.log('Payload', payload);
+  async deconnection(_server: Server, client: Socket) {
+    this.handleDisconnect(client);
   }
-  //   /**
-  //  * Override the `registerHandlers` method to handle connection and disconnection events.
-  //  * @param server - The WebSocket server instance.
-  //  */
-  //   registerHandlers(server: Server): void {
-  //     server.on('connection', (client: Socket) => {
-
-  //       this.handleConnection(client);
-
-  //       client.on(EchoEvent.Disconnect, () => {
-  //         this.handleDisconnect(client);
-  //       });
-  //     });
-  //   }
 
   /**
    * Handles a new client connection.
@@ -155,18 +151,6 @@ export class AuthWebsocketHandlers extends BaseWebsocketHandler {
       console.log(`User ${userId} has no more active connections, removed from Redis.`);
     }
     console.log('--fin');
-  }
-
-  create(server: Server, client: Socket, payload: any): void {
-    throw new Error('Method not implemented.');
-  }
-
-  update(server: Server, client: Socket, payload: any): void {
-    throw new Error('Method not implemented.');
-  }
-
-  delete(server: Server, client: Socket, payload: any): void {
-    throw new Error('Method not implemented.');
   }
 
 }
