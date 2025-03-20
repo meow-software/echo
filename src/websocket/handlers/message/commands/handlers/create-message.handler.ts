@@ -14,7 +14,8 @@ export class CreateMessageHandler implements ICommandHandler<CreateMessageComman
   async execute(commandMessage: CreateMessageCommand): Promise<any> {
     const { messageDto } = commandMessage;
     const messageEntity = MessageEntity.new(this.snowflakeService, messageDto.channelId, messageDto.senderId, messageDto.content);
-    // return message or propage error
-    return await this.messageRepository.create(messageEntity);
+    const message = await this.messageRepository.create(messageEntity);
+    await this.messageCacheService.saveMessage(messageEntity);
+    return message;
   }
 }

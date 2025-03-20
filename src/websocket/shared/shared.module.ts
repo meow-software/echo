@@ -10,7 +10,7 @@ import { DtoChecker, RedisModule, WsErrorHandlerService, RepositoryModule } from
     RepositoryModule,
   ],
   providers: [
-    RedisClientService,
+    // RedisClientService,
     WsErrorHandlerService,
     DtoChecker,
     WsErrorHandlerService,
@@ -19,12 +19,13 @@ import { DtoChecker, RedisModule, WsErrorHandlerService, RepositoryModule } from
     PrismaService
   ],
   exports: [
-    RedisClientService, 
+    // RedisClientService, 
     WsErrorHandlerService, 
     DtoChecker, 
     CommandBus,
     SnowflakeService,
-    PrismaService
+    PrismaService,
+    RedisModule
   ],
 })
 export class SharedModule {}

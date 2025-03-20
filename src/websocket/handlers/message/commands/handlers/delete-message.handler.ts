@@ -1,7 +1,6 @@
 
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { MessageCacheService, MessageEntity, MessageRepository, SnowflakeEntity } from '@tellme/shared';
-import { SnowflakeService } from '@tellme/common';
+import { MessageCacheService, MessageEntity, MessageRepository } from '@tellme/shared';
 import { DeleteMessageCommand } from '../delete-message.command';
 
 @CommandHandler(DeleteMessageCommand)
@@ -12,12 +11,8 @@ export class DeleteMessageHandler implements ICommandHandler<DeleteMessageComman
   ) {}
   async execute(commandMessage: DeleteMessageCommand): Promise<any> {
     const { messageDto } = commandMessage;
-    // return message or propage error
-    const messgeDeleted = await this.messageRepository.delete(messageDto.messageId);
-
-    // TODO : check if message existts delete
-    // this.messageCacheService.delete(messageDto.messageId);
-
-    return messgeDeleted;
+    const messageDeleted : MessageEntity = await this.messageRepository.delete(messageDto.messageId);
+    this.messageCacheService.deleteMessage(messageDeleted);
+    return messageDeleted;
   }
 }

@@ -13,9 +13,9 @@ export class UpdateMessageHandler implements ICommandHandler<UpdateMessageComman
   ) {}
   async execute(commandMessage: UpdateMessageCommand): Promise<any> {
     const { messageDto } = commandMessage;
-    // TODO : Implement UpdateMessageHandler
-    // const messageEntity = new  MessageEntity.edit(messageDto.messageId, messageDto.channelId, messageDto.senderId, messageDto.content);
-    // return message or propage error
-    // return await this.messageRepository.update(messageEntity);
+    const messageEntity = MessageEntity.edit(messageDto.messageId, messageDto.channelId,messageDto.content);
+    const message = await this.messageRepository.edit(messageEntity);
+    await this.messageCacheService.updateMessage(messageEntity);
+    return message;
   }
 }
