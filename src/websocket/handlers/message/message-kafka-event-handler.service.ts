@@ -24,7 +24,7 @@ export class MessageKafkaEventHandler implements IKafkaEventHandler {
   async handleCreate(message: CreateMessageDto) {
     console.log('Processing MessageCreate event:', message);
     console.log('Message reçu de Kafka:', message); 
-    // Enregistrer le message en base de données via CQRS
+    // Enregistrer le message en base de données via CQRS 
     const messageEntity: MessageEntity = await this.commandBus.execute(new CreateMessageCommand(message));
     // Send the message to the room
     this.websocketHandler.emitToRoom(message.channelId, KafkaEvent.MessageCreate, messageEntity);

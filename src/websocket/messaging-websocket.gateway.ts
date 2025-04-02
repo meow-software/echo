@@ -3,7 +3,7 @@ import { Server } from 'socket.io';
 import { AuthWebsocketHandlers } from './handlers/auth/auth-websocket-handlers';
 import { MessageWebsocketHandlers } from './handlers/message/message-websocket-handlers';
 import { IBaseWebsocketHandler,EchoWebsocketGateway } from '@tellme/common';
-
+import { CommandBus } from '@nestjs/cqrs';
 
 @WebSocketGateway({
   cors: {
@@ -19,6 +19,7 @@ export class MessagingGateway extends EchoWebsocketGateway implements OnGatewayI
   constructor(
     private readonly authWebsocketHandlers: AuthWebsocketHandlers,
     private readonly messageWebsocketHandlers: MessageWebsocketHandlers,
+    private readonly commandBus: CommandBus
     // Inject other handlers
   ) {
     super();
@@ -36,5 +37,6 @@ export class MessagingGateway extends EchoWebsocketGateway implements OnGatewayI
       }
     }
     this.listen();
+
   }
 }

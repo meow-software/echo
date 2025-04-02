@@ -1,5 +1,4 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
 import { kafkaConfigClientModule } from 'src/kafka/config.kafka';
 import { KafkaModule } from 'src/kafka/kafka.module';
 import { ProducerService } from 'src/kafka/producers/producer.service';

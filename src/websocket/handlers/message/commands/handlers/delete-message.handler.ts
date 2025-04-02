@@ -14,5 +14,5 @@ export class DeleteMessageHandler implements ICommandHandler<DeleteMessageComman
     const messageDeleted : MessageEntity = await this.messageRepository.delete(messageDto.messageId);
     this.messageCacheService.deleteMessage(messageDeleted);
     return messageDeleted;
-  }
+  } 
 }

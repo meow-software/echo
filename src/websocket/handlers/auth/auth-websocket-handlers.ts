@@ -1,10 +1,10 @@
 import { Server, Socket } from 'socket.io';
 import { BadRequestException, UnauthorizedException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-
 import { ConfigService } from '@nestjs/config';
 import { BaseWebsocketHandler, OnWebsocketEventHandler, RedisClientService } from '@tellme/common';
 import { EchoEvent, RedisCacheKey, WsErrorHandlerService } from '@tellme/shared';
+import { CommandBus } from '@nestjs/cqrs';
 
 @Injectable()
 export class AuthWebsocketHandlers extends BaseWebsocketHandler {
@@ -14,7 +14,8 @@ export class AuthWebsocketHandlers extends BaseWebsocketHandler {
     private readonly jwtService: JwtService,
     private readonly redisService: RedisClientService,
     private readonly wsErrorHandlerService: WsErrorHandlerService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+        private readonly commandBus: CommandBus,
   ) {
     super();
     this.TTL = parseInt(this.configService.get("JWT_EXPIRES_IN", "3600"));
@@ -45,22 +46,19 @@ export class AuthWebsocketHandlers extends BaseWebsocketHandler {
 
   /**
    * Handles a new client connection.
-   * @param client - The client socket.
+   * @param client - The client socket. 
    */
   async handleConnection(client: Socket) {
-    console.log('Connection client:', client.id);
-    // Just for dev
     client.emit('user-joined', {
       message: `user joined the chat: ${client.id}`,
     });
-    return;
-
+    return ;
     // Extract token JWT
-    const token = client.handshake.headers.authorization || 'efface moi'; // TODO
-    if (!token) {
+    const token = client.handshake.headers.authorization +"todo";
+    if (!token) { 
       // No token found
       this.wsErrorHandlerService.emitError(client, new UnauthorizedException('No authorization token, please add it.'));
-      client.disconnect();
+      client.disconnect(); 
       return;
     }
 

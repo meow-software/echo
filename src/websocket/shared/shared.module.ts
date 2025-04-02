@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { CommandBus, CqrsModule } from '@nestjs/cqrs';
-import { PrismaService, RedisClientService, SnowflakeService } from '@tellme/common';
+import { PrismaService, SnowflakeService } from '@tellme/common';
 import { DtoChecker, RedisModule, WsErrorHandlerService, RepositoryModule } from '@tellme/shared';
 
 @Module({
-  imports : [
+  imports : [ 
     CqrsModule,
     RedisModule,
     RepositoryModule,
@@ -14,7 +14,6 @@ import { DtoChecker, RedisModule, WsErrorHandlerService, RepositoryModule } from
     WsErrorHandlerService,
     DtoChecker,
     WsErrorHandlerService,
-    CommandBus,
     SnowflakeService,
     PrismaService
   ],
@@ -22,10 +21,10 @@ import { DtoChecker, RedisModule, WsErrorHandlerService, RepositoryModule } from
     // RedisClientService, 
     WsErrorHandlerService, 
     DtoChecker, 
-    CommandBus,
     SnowflakeService,
     PrismaService,
-    RedisModule
+    RedisModule,
+    CqrsModule
   ],
 })
 export class SharedModule {}

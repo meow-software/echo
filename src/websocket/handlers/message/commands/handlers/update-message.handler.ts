@@ -4,7 +4,7 @@ import { MessageCacheService, MessageEntity, MessageRepository } from '@tellme/s
 import { SnowflakeService } from '@tellme/common';
 import { UpdateMessageCommand } from '../update-message.command';
 
-@CommandHandler(UpdateMessageCommand)
+@CommandHandler(UpdateMessageCommand) 
 export class UpdateMessageHandler implements ICommandHandler<UpdateMessageCommand> {
   constructor(
     protected readonly messageCacheService: MessageCacheService,

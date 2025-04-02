@@ -7,7 +7,7 @@ import { AuthModule } from './handlers/auth/auth.module';
 import { SharedModule } from './shared/shared.module';
 
 @Module({
-  imports : [
+  imports : [ 
     JwtModule.register({}), 
     AuthModule, 
     MessageModule, 

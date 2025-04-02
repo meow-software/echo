@@ -6,21 +6,21 @@ import { CreateMessageHandler } from './commands/handlers/create-message.handler
 import { DeleteMessageHandler } from './commands/handlers/delete-message.handler';
 import { UpdateMessageHandler } from './commands/handlers/update-message.handler';
 import { MessageKafkaEventHandler } from './message-kafka-event-handler.service';
-import { MessageCacheService, MessageRepository } from '@tellme/shared';
+import { MessageCacheService, MessageRepository } from '@tellme/shared'; 
 
 @Module({
-  imports : [
+  imports : [  
     SharedModule,
-    KafkaSharedModule
+    KafkaSharedModule,
   ],
   providers: [
+    CreateMessageHandler,
+    DeleteMessageHandler,
+    UpdateMessageHandler,
     MessageWebsocketHandlers,
     MessageKafkaEventHandler,
     MessageCacheService,
     MessageRepository,
-    CreateMessageHandler,
-    DeleteMessageHandler,
-    UpdateMessageHandler
   ],
   exports: [
     MessageWebsocketHandlers, MessageKafkaEventHandler
